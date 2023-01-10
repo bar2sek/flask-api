@@ -1,17 +1,26 @@
 from flask import Flask
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, reqparse
 
 app = Flask(__name__)
 api = Api(app)
 
-names = {"robbie": {"age": 43, "gender": "male"},
-        "rita": {"age": 42, "gender": "female"}}
+video_put_args = reqparse.RequestParser()
+video_put_args.add_argument("name", type=str, help="Name of video is required", required=True)
+video_put_args.add_argument("views", type=int, help="Views of video")
+video_put_args.add_argument("likes", type=int, help="Likes on video")
 
-class HelloWorld(Resource):
-    def get(self, name): # this is overriding the get method for when someone sends a get request to our app
-        return names[name]
+videos = {}
 
-api.add_resource(HelloWorld, "/helloworld/<string:name>") # registering the resource to go to this class at this uri
+class Video(Resource):
+    def get(self, video_id):
+        return videos[video_id]
+
+    def put(self, video_id):
+        args = video_put_args.parse_args() # will get all args from uri input
+        videos[video_id] = args
+        return videos[video_id], 201
+
+api.add_resource(Video, "/video/<int:video_id>") # registering the resource to go to this class at this uri
 
 
 if __name__ == "__main__":
