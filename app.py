@@ -71,7 +71,5 @@ class Video(Resource):
 
         return result
 
-api.add_resource(Video, "/video/<int:video_id>") # registering the resource to go to this class at this uri
-
 if __name__ == "__main__":
     app.run(debug=True) # remove debug after development
